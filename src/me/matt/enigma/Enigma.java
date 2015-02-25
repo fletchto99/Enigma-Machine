@@ -9,21 +9,25 @@ import me.matt.enigma.wrappers.Rotor;
 
 public class Enigma {
 
-    private static boolean DEBUG_ENABLED = false;
-    private static boolean DEBUG_ROTOR = false;
+    public static void debug(final String text) {
+        if (Enigma.DEBUG_ENABLED) {
+            System.out.println(text);
+        }
 
-    public static void main(String[] args) {
-        Scanner s = new Scanner(System.in);
+    }
+
+    public static void main(final String[] args) {
+        final Scanner s = new Scanner(System.in);
 
         // Setup the plugobard
-        PlugBoardSwitch[] switches = new PlugBoardSwitch[10];
+        final PlugBoardSwitch[] switches = new PlugBoardSwitch[10];
 
         System.out
                 .println("What are your plugboard settings? (2 characters, seperated by a space)");
 
         for (int i = 0; i < 10; i++) {
-            if (!DEBUG_ROTOR) {
-                String line = s.nextLine();
+            if (!Enigma.DEBUG_ROTOR) {
+                final String line = s.nextLine();
                 switches[i] = new PlugBoardSwitch(line.toUpperCase().charAt(0),
                         line.toUpperCase().charAt(2));
             } else {
@@ -32,10 +36,10 @@ public class Enigma {
 
         }
 
-        PlugBoard plugboard = new PlugBoard(switches);
+        final PlugBoard plugboard = new PlugBoard(switches);
 
         // Setup the rotor settings
-        Rotor[] rotors = new Rotor[3];
+        final Rotor[] rotors = new Rotor[3];
 
         // TODO: Setup rotor choosing
 
@@ -51,13 +55,13 @@ public class Enigma {
         // Setup the reflector
 
         // TODO: Setup reflector choosing
-        Reflector reflector = new Reflector(EnigmaSettings.REFLECTOR_C);
+        final Reflector reflector = new Reflector(EnigmaSettings.REFLECTOR_C);
         // System.out.println("Which reflector should be used? (B, C, BC, CD)");
         s.nextLine();
         // Encrypt/Decrypt the message
         System.out.println("Please enter a message to encrypt/decrypt.");
-        char[] msg = s.nextLine().toUpperCase().toCharArray();
-        char[] encoded = new char[msg.length];
+        final char[] msg = s.nextLine().toUpperCase().toCharArray();
+        final char[] encoded = new char[msg.length];
         for (int i = 0; i < msg.length; i++) {
 
             char encode = msg[i];
@@ -65,25 +69,25 @@ public class Enigma {
                 encoded[i] = encode;
                 continue;
             }
-            debug("Encoding letter: " + encode);
+            Enigma.debug("Encoding letter: " + encode);
             encode = plugboard.swap(encode);
-            debug("After plugboard: " + encode);
+            Enigma.debug("After plugboard: " + encode);
             encode = rotors[0].swap(encode);
-            debug("After rotor 1: " + encode);
+            Enigma.debug("After rotor 1: " + encode);
             encode = rotors[1].swap(encode);
-            debug("After rotor 2: " + encode);
+            Enigma.debug("After rotor 2: " + encode);
             encode = rotors[2].swap(encode);
-            debug("After rotor 3: " + encode);
+            Enigma.debug("After rotor 3: " + encode);
             encode = reflector.swap(encode);
-            debug("After reflector: " + encode);
+            Enigma.debug("After reflector: " + encode);
             encode = rotors[2].swap(encode, true);
-            debug("After rotor 3: " + encode);
+            Enigma.debug("After rotor 3: " + encode);
             encode = rotors[1].swap(encode, true);
-            debug("After rotor 2: " + encode);
+            Enigma.debug("After rotor 2: " + encode);
             encode = rotors[0].swap(encode, true);
-            debug("After rotor 1: " + encode);
+            Enigma.debug("After rotor 1: " + encode);
             encode = plugboard.swap(encode);
-            debug("After plugboard: " + encode);
+            Enigma.debug("After plugboard: " + encode);
             encoded[i] = encode;
             if (rotors[0].incrementPosition()) {
                 if (rotors[1].incrementPosition()) {
@@ -95,11 +99,8 @@ public class Enigma {
         s.close();
     }
 
-    public static void debug(String text) {
-        if (DEBUG_ENABLED) {
-            System.out.println(text);
-        }
+    private static boolean DEBUG_ENABLED = false;
 
-    }
+    private static boolean DEBUG_ROTOR = false;
 
 }
